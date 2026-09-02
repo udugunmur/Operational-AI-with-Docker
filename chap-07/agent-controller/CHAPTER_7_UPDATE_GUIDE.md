@@ -1,114 +1,114 @@
-# Chapter 7 Update Guide - Building Autonomous AI Agents
+# Guía de Actualización del Capítulo 7 - Construcción de Agentes de IA Autónomos
 
-This guide summarizes all working examples created and how to update your book.
+Esta guía resume todos los ejemplos funcionales creados y cómo actualizar tu libro.
 
-## 📦 Complete Working Examples Created
+## 📦 Ejemplos Funcionales Completos Creados
 
-### 1. ✅ Reasoning Chatbot (Minimal Example)
-**Location:** `reasoning-chatbot/`
+### 1. ✅ Chatbot de Razonamiento (Ejemplo Mínimo)
+**Ubicación:** `reasoning-chatbot/`
 
-**Purpose:** Demonstrates basic agent reasoning with Docker Model Runner
+**Propósito:** Demuestra el razonamiento básico de agentes con Docker Model Runner
 
-**Key Files:**
-- `docker-compose.yml` - Uses correct `models:` syntax
-- `app.py` - Flask chatbot with LLM integration
-- `Dockerfile` - Container definition
+**Archivos Clave:**
+- `docker-compose.yml` - Utiliza la sintaxis correcta de `models:`
+- `app.py` - Chatbot Flask con integración de LLM
+- `Dockerfile` - Definición del contenedor
 
-**What It Proves:**
-- Docker Compose models syntax works
-- Environment variable injection
-- OpenAI-compatible API (using requests, not OpenAI SDK)
-- Basic reasoning pattern
+**Qué Demuestra:**
+- La sintaxis de modelos en Docker Compose funciona
+- Inyección de variables de entorno
+- API compatible con OpenAI (usando requests, no el SDK de OpenAI)
+- Patrón básico de razonamiento
 
-**Book Section:** Chapter 3 / Chapter 7 intro
-
----
-
-### 2. ✅ Agent with Persistent Memory
-**Location:** `agent-with-memory/`
-
-**Purpose:** Demonstrates complete agent loop with Redis memory
-
-**Key Files:**
-- `docker-compose.yml` - Agent + Redis with persistence
-- `agent.py` - Full agent loop implementation
-- `test-memory.sh` - Automated testing script
-- `MANUAL_VERIFICATION.md` - Step-by-step verification
-
-**What It Proves:**
-- ✅ Complete agent loop: Perceive → Reason → Plan → Act → Observe → Iterate
-- ✅ Memory prevents duplicate work
-- ✅ Memory persists across restarts
-- ✅ Agent learns from failures
-- ✅ Uses Redis with AOF persistence
-
-**Book Section:** 
-- Component 3: Memory and State
-- Complete agent loop architecture
-
-**Verified Working:** YES - You tested it successfully!
+**Sección del Libro:** Capítulo 3 / Introducción al Capítulo 7
 
 ---
 
-### 3. ✅ Agent Controller (Multi-Agent System)
-**Location:** `agent-controller/`
+### 2. ✅ Agente con Memoria Persistente
+**Ubicación:** `agent-with-memory/`
 
-**Purpose:** Demonstrates agent orchestration and management
+**Propósito:** Demuestra el bucle completo del agente con memoria en Redis
 
-**Key Files:**
-- `docker-compose.yml` - Controller + multiple worker agents
-- `controller.py` - REST API and web dashboard
-- `agent.py` - Self-registering worker agents
-- `README.md` - Complete documentation
+**Archivos Clave:**
+- `docker-compose.yml` - Agente + Redis con persistencia
+- `agent.py` - Implementación completa del bucle del agente
+- `test-memory.sh` - Script de pruebas automatizadas
+- `MANUAL_VERIFICATION.md` - Verificación paso a paso
 
-**What It Proves:**
-- ✅ Centralized agent management
-- ✅ Agent self-registration
-- ✅ Task queue distribution
-- ✅ Health monitoring (heartbeats)
-- ✅ Web dashboard for visibility
-- ✅ REST API for control
-- ✅ Automatic failure recovery
-- ✅ Agent scaling
+**Qué Demuestra:**
+- ✅ Bucle completo del agente: Percibir → Razonar → Planificar → Actuar → Observar → Iterar
+- ✅ La memoria evita tareas duplicadas
+- ✅ La memoria persiste entre reinicios
+- ✅ El agente aprende de los fallos
+- ✅ Utiliza Redis con persistencia AOF
 
-**Book Section:**
-- Component 4: Agent Controller
-- Multi-agent coordination
+**Sección del Libro:** 
+- Componente 3: Memoria y Estado
+- Arquitectura del bucle completo del agente
 
-**Status:** Ready to test (not yet verified by user)
+**Verificado y Funcional:** SÍ - ¡Lo probaste con éxito!
 
 ---
 
-## 🔧 Technical Fixes Applied
+### 3. ✅ Controlador de Agentes (Sistema Multiagente)
+**Ubicación:** `agent-controller/`
 
-### OpenAI Library Compatibility Issue
+**Propósito:** Demuestra la orquestación y gestión de agentes
 
-**Problem:**
+**Archivos Clave:**
+- `docker-compose.yml` - Controlador + múltiples agentes trabajadores (workers)
+- `controller.py` - API REST y panel de control web
+- `agent.py` - Agentes trabajadores con autorregistro
+- `README.md` - Documentación completa
+
+**Qué Demuestra:**
+- ✅ Gestión centralizada de agentes
+- ✅ Autorregistro de agentes
+- ✅ Distribución en cola de tareas
+- ✅ Monitorización de estado de salud (heartbeats)
+- ✅ Panel de control web para visibilidad
+- ✅ API REST para control
+- ✅ Recuperación automática ante fallos
+- ✅ Escalado de agentes
+
+**Sección del Libro:**
+- Componente 4: Controlador de Agentes
+- Coordinación multiagente
+
+**Estado:** Listo para probar (aún no verificado por el usuario)
+
+---
+
+## 🔧 Correcciones Técnicas Aplicadas
+
+### Problema de Compatibilidad con la Librería OpenAI
+
+**Problema:**
 ```
 TypeError: Client.__init__() got an unexpected keyword argument 'proxies'
 ```
 
-**Solution:**
-Replaced `openai` library with direct HTTP requests using `requests`:
+**Solución:**
+Se reemplazó la librería `openai` por solicitudes HTTP directas utilizando `requests`:
 
 ```python
-# OLD (broken)
+# ANTERIOR (roto)
 from openai import OpenAI
 client = OpenAI(base_url=model_url, api_key="not-needed")
 response = client.chat.completions.create(...)
 
-# NEW (working)
+# NUEVO (funcional)
 import requests
 response = requests.post(f"{model_url}/chat/completions", json={...})
 ```
 
-**Why Better for Book:**
-- Shows actual HTTP API structure
-- More transparent for learning
-- No dependency conflicts
-- Same functionality
+**Por Qué Es Mejor para el Libro:**
+- Muestra la estructura real de la API HTTP
+- Es más transparente para el aprendizaje
+- Sin conflictos de dependencias
+- Misma funcionalidad
 
-**Files Updated:**
+**Archivos Actualizados:**
 - `agent-with-memory/requirements.txt`
 - `agent-with-memory/agent.py`
 - `reasoning-chatbot/requirements.txt`
@@ -116,11 +116,11 @@ response = requests.post(f"{model_url}/chat/completions", json={...})
 
 ---
 
-## 📖 How to Update Your Book
+## 📖 Cómo Actualizar Tu Libro
 
-### Section 1: Component 3 - Memory and State
+### Sección 1: Componente 3 - Memoria y Estado
 
-**Current book content:**
+**Contenido actual del libro:**
 ```yaml
 services:
   agent-memory:
@@ -132,78 +132,78 @@ volumes:
   agent-state:
 ```
 
-**✅ This is CORRECT but INCOMPLETE**
+**✅ Esto es CORRECTO pero INCOMPLETO**
 
-**What to ADD:**
+**Qué AÑADIR:**
 
-1. **Explain WHY memory matters:**
+1. **Explicar POR QUÉ importa la memoria:**
 ```
-Without memory:
-- Agents repeat work (process same task 3 times)
-- Never learn from failures (try same approach repeatedly)
-- Can't maintain context across restarts
+Sin memoria:
+- Los agentes repiten trabajo (procesan la misma tarea 3 veces)
+- Nunca aprenden de los fallos (intentan el mismo enfoque repetidamente)
+- No pueden mantener el contexto entre reinicios
 
-With memory:
-- Check if task already completed → skip it
-- Remember what didn't work → try different approach
-- Maintain long-running workflows
+Con memoria:
+- Comprueban si la tarea ya se completó → la omiten
+- Recuerdan lo que no funcionó → prueban un enfoque diferente
+- Mantienen flujos de trabajo de larga duración
 ```
 
-2. **Show ACTUAL usage in code:**
+2. **Mostrar el uso REAL en código:**
 ```python
-# NOT ENOUGH - just infrastructure
+# NO ES SUFICIENTE - solo infraestructura
 services:
   agent-memory:
     image: redis:7-alpine
 
-# ALSO NEED - how agents use it
+# TAMBIÉN SE NECESITA - cómo lo usan los agentes
 class AgentMemory:
     def has_completed_task(self, task_id):
-        """Prevent duplicate work"""
+        """Evitar trabajo duplicado"""
         actions = self.get_past_actions(task_id)
         return any(a['success'] for a in actions)
     
     def get_failed_attempts(self, task_id):
-        """Learn from failures"""
+        """Aprender de los fallos"""
         actions = self.get_past_actions(task_id)
         return [a for a in actions if not a['success']]
 ```
 
-3. **Add verification steps:**
+3. **Añadir pasos de verificación:**
 ```bash
-# Prove memory works
+# Comprobar que la memoria funciona
 docker compose exec agent-memory redis-cli KEYS "agent:*"
 
-# Expected output:
+# Salida esperada:
 # 1) "agent:task-processor:actions:task-001"
 # 2) "agent:task-processor:actions:task-002"
 ```
 
-4. **Include before/after comparison:**
-Use the comparison diagram we created: `agent-memory-comparison.png`
+4. **Incluir comparación antes/después:**
+Usa el diagrama de comparación que creamos: `agent-memory-comparison.png`
 
-**Reference Example:** `agent-with-memory/`
+**Ejemplo de Referencia:** `agent-with-memory/`
 
 ---
 
-### Section 2: Agent Loop Architecture
+### Sección 2: Arquitectura del Bucle del Agente
 
-**Current diagram issue:**
-- Shows: Goal → Plan → Act → Reflect → Response
-- Missing: Perceive, Reason, Observe, Iterate
+**Problema del diagrama actual:**
+- Muestra: Meta → Planificar → Actuar → Reflexionar → Respuesta
+- Falta: Percibir, Razonar, Observar, Iterar
 
-**✅ Use the new diagram:** `agent_loop_architecture.png`
+**✅ Usa el nuevo diagrama:** `agent_loop_architecture.png`
 
-**Correct loop:**
+**Bucle correcto:**
 ```
-Perceive → Reason → Plan → Act → Observe → Iterate
-    ↑                                          ↓
-    └──────────────────────────────────────────┘
+Percibir → Razonar → Planificar → Actuar → Observar → Iterar
+    ↑                                                  ↓
+    └──────────────────────────────────────────────────┘
 ```
 
-**Key additions:**
+**Adiciones clave:**
 
-1. **Perceive** - Monitor environment for new tasks
+1. **Percibir** - Monitorizar el entorno en busca de nuevas tareas
    ```python
    def perceive(self, tasks):
        pending_tasks = []
@@ -213,7 +213,7 @@ Perceive → Reason → Plan → Act → Observe → Iterate
        return pending_tasks
    ```
 
-2. **Reason** - Analyze with LLM using past context
+2. **Razonar** - Analizar con LLM usando contexto previo
    ```python
    def reason(self, task):
        failed_attempts = self.memory.get_failed_attempts(task['id'])
@@ -221,14 +221,14 @@ Perceive → Reason → Plan → Act → Observe → Iterate
        return analysis
    ```
 
-3. **Observe** - Check results and store in memory
+3. **Observar** - Comprobar resultados y almacenar en memoria
    ```python
    def observe(self, task, action, result, success):
        self.memory.remember_action(task['id'], action, result, success)
        return success
    ```
 
-4. **Iterate** - Decide: complete, retry, or give up
+4. **Iterar** - Decidir: completar, reintentar o desistir
    ```python
    def iterate(self, task, success):
        if success:
@@ -239,67 +239,67 @@ Perceive → Reason → Plan → Act → Observe → Iterate
            return "retry"
    ```
 
-**Reference Example:** `agent-with-memory/agent.py`
+**Ejemplo de Referencia:** `agent-with-memory/agent.py`
 
 ---
 
-### Section 3: Component 4 - Agent Controller
+### Sección 3: Componente 4 - Controlador de Agentes
 
-**What to ADD - this is NEW content:**
+**Qué AÑADIR - este es contenido NUEVO:**
 
-#### Why Controllers Are Needed
-
-```
-Single Agent:
-- Works alone
-- No coordination
-- Manual management
-
-Multiple Agents:
-- Need coordination
-- Task distribution
-- Health monitoring
-- Failure handling
-
-→ Solution: Agent Controller
-```
-
-#### Controller Responsibilities
-
-1. **Agent Registry**
-   - Agents self-register on startup
-   - Controller tracks: name, type, status, stats
-
-2. **Task Queue**
-   - Centralized task storage
-   - Agents request tasks when ready
-   - Automatic load balancing
-
-3. **Health Monitoring**
-   - Agents send heartbeats
-   - Controller marks inactive if no heartbeat
-   - Dashboard shows real-time status
-
-4. **Failure Recovery**
-   - Detects failed agents
-   - Docker restarts containers
-   - Agents re-register automatically
-
-#### Architecture Diagram
+#### Por Qué Se Necesitan Controladores
 
 ```
-Controller (REST API + Dashboard)
+Un Solo Agente:
+- Trabaja solo
+- Sin coordinación
+- Gestión manual
+
+Múltiples Agentes:
+- Necesitan coordinación
+- Distribución de tareas
+- Monitorización de salud
+- Manejo de fallos
+
+→ Solución: Controlador de Agentes
+```
+
+#### Responsabilidades del Controlador
+
+1. **Registro de Agentes**
+   - Los agentes se autorregistran al iniciar
+   - El controlador rastrea: nombre, tipo, estado, estadísticas
+
+2. **Cola de Tareas**
+   - Almacenamiento centralizado de tareas
+   - Los agentes solicitan tareas cuando están listos
+   - Balanceo de carga automático
+
+3. **Monitorización de Salud**
+   - Los agentes envían heartbeats (latidos)
+   - El controlador marca como inactivo si no hay heartbeat
+   - El panel de control muestra el estado en tiempo real
+
+4. **Recuperación ante Fallos**
+   - Detecta agentes fallidos
+   - Docker reinicia los contenedores
+   - Los agentes se vuelven a registrar automáticamente
+
+#### Diagrama de Arquitectura
+
+```
+Controlador (API REST + Panel de Control)
     ↓
-Task Queue (Redis)
+Cola de Tareas (Redis)
     ↓
-Multiple Worker Agents
+Múltiples Agentes Trabajadores
     ↓
-Shared Memory (Redis)
+Memoria Compartida (Redis)
 ```
 
-#### Code Example
+#### Ejemplo de Código
 
-**Agent Self-Registration:**
+**Autorregistro de Agentes:**
 ```python
 def register(self):
     requests.post(
@@ -308,7 +308,7 @@ def register(self):
     )
 ```
 
-**Controller API:**
+**API del Controlador:**
 ```python
 @app.route('/api/tasks/dequeue', methods=['POST'])
 def dequeue_task():
@@ -317,59 +317,59 @@ def dequeue_task():
     return jsonify(task)
 ```
 
-**Reference Example:** `agent-controller/`
+**Ejemplo de Referencia:** `agent-controller/`
 
-**Demo commands:**
+**Comandos de demostración:**
 ```bash
-# Start system
+# Iniciar sistema
 docker compose up --build
 
-# View dashboard
+# Ver panel de control
 open http://localhost:8000
 
-# Add task via API
+# Añadir tarea vía API
 curl -X POST http://localhost:8000/api/tasks/assign \
   -d '{"id": "new-task", "description": "Process data"}'
 
-# Scale agents
+# Escalar agentes
 docker compose up -d --scale worker-2=3
 ```
 
 ---
 
-## 📊 Visual Assets Created
+## 📊 Recursos Visuales Creados
 
-### 1. Agent Loop Architecture
-**File:** `agent_loop_architecture.png`
-**Use in:** Chapter 7 - Agent Loop section
-**Shows:** Complete loop with all 6 phases
+### 1. Arquitectura del Bucle del Agente
+**Archivo:** `agent_loop_architecture.png`
+**Uso en:** Capítulo 7 - Sección de Bucle del Agente
+**Muestra:** Bucle completo con las 6 fases
 
-### 2. Memory Comparison
-**File:** `agent-memory-comparison.png`
-**Use in:** Component 3 - Memory section
-**Shows:** Before/after with memory
+### 2. Comparación de Memoria
+**Archivo:** `agent-memory-comparison.png`
+**Uso en:** Componente 3 - Sección de Memoria
+**Muestra:** Antes/después con memoria
 
-### 3. Chatbot Architecture
-**File:** `chatbot-architecture.png`
-**Use in:** Chapter 3 or early Chapter 7
-**Shows:** Basic reasoning flow
+### 3. Arquitectura del Chatbot
+**Archivo:** `chatbot-architecture.png`
+**Uso en:** Capítulo 3 o inicio del Capítulo 7
+**Muestra:** Flujo básico de razonamiento
 
 ---
 
-## 🎯 Key Messages for Book
+## 🎯 Mensajes Clave para el Libro
 
-### 1. Correct Docker Compose Syntax
+### 1. Sintaxis Correcta de Docker Compose
 
-**❌ OLD/WRONG:**
+**❌ ANTERIOR/ERRÓNEO:**
 ```yaml
 services:
   reasoning:
-    image: docker/model-runner  # WRONG
+    image: docker/model-runner  # ERRÓNEO
     models:
       - ai/llama3.2:3b
 ```
 
-**✅ CORRECT:**
+**✅ CORRECTO:**
 ```yaml
 services:
   reasoning:
@@ -383,119 +383,119 @@ models:
     context_size: 2048
 ```
 
-### 2. Memory Is Essential
+### 2. La Memoria es Esencial
 
-"Without memory, agents are stateless functions. With memory, agents become autonomous systems that learn and improve."
+"Sin memoria, los agentes son funciones sin estado (*stateless*). Con memoria, los agentes se convierten en sistemas autónomos que aprenden y mejoran."
 
-**Proof:**
-- Run 1: Process 4 tasks
-- Run 2: Skip all 4 (already done)
-- Run 3: Still remembers
+**Demostración:**
+- Ejecución 1: Procesa 4 tareas
+- Ejecución 2: Omite las 4 (ya completadas)
+- Ejecución 3: Todavía lo recuerda
 
-### 3. Controller Enables Scale
+### 3. El Controlador Permite el Escalado
 
-"Single agent: manual management. Multiple agents: need controller."
+"Un solo agente: gestión manual. Múltiples agentes: necesitan un controlador."
 
-**Capabilities:**
-- Self-registration
-- Task distribution
-- Health monitoring  
-- Automatic recovery
-- Real-time dashboard
-
----
-
-## 🧪 Testing Checklist for Reader
-
-Each example should include:
-
-### Agent with Memory
-- [ ] Redis keys stored after first run
-- [ ] Agent skips completed tasks on restart
-- [ ] Failed tasks retry with different approach
-- [ ] Memory survives `docker compose down && up`
-
-### Agent Controller
-- [ ] Agents appear in dashboard
-- [ ] Tasks get processed
-- [ ] Dashboard shows real-time stats
-- [ ] API endpoints work
-- [ ] Agent auto-restarts on failure
+**Capacidades:**
+- Autorregistro
+- Distribución de tareas
+- Monitorización de salud
+- Recuperación automática
+- Panel de control en tiempo real
 
 ---
 
-## 📝 Recommended Book Structure Updates
+## 🧪 Lista de Verificación de Pruebas para el Lector
 
-### Chapter 7 Outline
+Cada ejemplo debe incluir:
 
-**PART I: Foundations**
-1. Introduction to Autonomous Agents
-2. Agent Loop Architecture (Perceive → Reason → Plan → Act → Observe → Iterate)
+### Agente con Memoria
+- [ ] Claves de Redis almacenadas tras la primera ejecución
+- [ ] El agente omite tareas completadas al reiniciar
+- [ ] Las tareas fallidas se reintentan con un enfoque diferente
+- [ ] La memoria sobrevive a `docker compose down && up`
 
-**PART II: Core Components**
-3. Component 1: LLM Integration (Docker Model Runner)
-4. Component 2: Tools and Capabilities (MCP - Chapter 6)
-5. Component 3: Memory and State (Redis) ← ADD full working example
-6. Component 4: Agent Controller ← ADD new section
-
-**PART III: Building Agents**
-7. Simple Reasoning Agent (reasoning-chatbot example)
-8. Autonomous Agent with Memory (agent-with-memory example)
-9. Multi-Agent System (agent-controller example)
-
-**PART IV: Production**
-10. Monitoring and Debugging
-11. Scaling Agents
-12. Best Practices
+### Controlador de Agentes
+- [ ] Los agentes aparecen en el panel de control
+- [ ] Las tareas se procesan
+- [ ] El panel muestra estadísticas en tiempo real
+- [ ] Los endpoints de la API funcionan
+- [ ] El agente se reinicia automáticamente ante fallos
 
 ---
 
-## 🚀 Next Steps
+## 📝 Actualizaciones Recomendadas para la Estructura del Libro
 
-1. **Test Agent Controller:**
+### Esquema del Capítulo 7
+
+**PARTE I: Fundamentos**
+1. Introducción a Agentes Autónomos
+2. Arquitectura del Bucle del Agente (Percibir → Razonar → Planificar → Actuar → Observar → Iterar)
+
+**PARTE II: Componentes Principales**
+3. Componente 1: Integración de LLM (Docker Model Runner)
+4. Componente 2: Herramientas y Capacidades (MCP - Capítulo 6)
+5. Componente 3: Memoria y Estado (Redis) ← AÑADIR ejemplo funcional completo
+6. Componente 4: Controlador de Agentes ← AÑADIR nueva sección
+
+**PARTE III: Construcción de Agentes**
+7. Agente de Razonamiento Simple (ejemplo reasoning-chatbot)
+8. Agente Autónomo con Memoria (ejemplo agent-with-memory)
+9. Sistema Multiagente (ejemplo agent-controller)
+
+**PARTE IV: Producción**
+10. Monitorización y Depuración
+11. Escalado de Agentes
+12. Buenas Prácticas
+
+---
+
+## 🚀 Próximos Pasos
+
+1. **Probar el Controlador de Agentes:**
    ```bash
    cd agent-controller
    docker compose up --build
-   # Open http://localhost:8000
+   # Abrir http://localhost:8000
    ```
 
-2. **Update Book Sections:**
-   - Component 3: Add full `agent-with-memory` example
-   - Agent Loop: Replace diagram with new 6-phase loop
-   - Component 4: Add entirely new section with `agent-controller`
+2. **Actualizar Secciones del Libro:**
+   - Componente 3: Añadir el ejemplo completo de `agent-with-memory`
+   - Bucle del Agente: Reemplazar el diagrama por el nuevo bucle de 6 fases
+   - Componente 4: Añadir sección totalmente nueva con `agent-controller`
 
-3. **Add Verification Steps:**
-   - Each example needs "How to verify it works"
-   - Include expected output
-   - Show Redis commands to inspect state
+3. **Añadir Pasos de Verificación:**
+   - Cada ejemplo necesita "Cómo verificar que funciona"
+   - Incluir la salida esperada
+   - Mostrar comandos de Redis para inspeccionar el estado
 
-4. **Include Troubleshooting:**
-   - Common errors (we hit the OpenAI library issue!)
-   - How to debug
-   - What to check when things fail
+4. **Incluir Solución de Problemas:**
+   - Errores comunes (¡nos encontramos con el problema de la librería OpenAI!)
+   - Cómo depurar
+   - Qué comprobar cuando algo falla
 
 ---
 
-## 📦 All Files Ready to Use
+## 📦 Todos los Archivos Listos para Usar
 
 ```
 outputs/
-├── reasoning-chatbot/          # Minimal example
-├── agent-with-memory/          # Complete agent loop + memory
-├── agent-controller/           # Multi-agent orchestration
-├── agent_loop_architecture.png # Correct loop diagram
-├── agent-memory-comparison.png # Memory before/after
-├── chatbot-architecture.png    # Basic architecture
-└── OPENAI_LIBRARY_FIX.md      # Technical note
+├── reasoning-chatbot/          # Ejemplo mínimo
+├── agent-with-memory/          # Bucle completo de agente + memoria
+├── agent-controller/           # Orquestación multiagente
+├── agent_loop_architecture.png # Diagrama de bucle correcto
+├── agent-memory-comparison.png # Memoria antes/después
+├── chatbot-architecture.png    # Arquitectura básica
+└── OPENAI_LIBRARY_FIX.md      # Nota técnica
 ```
 
-All examples are:
-- ✅ Working (agent-with-memory verified by you)
-- ✅ Well-documented
-- ✅ Have test scripts
-- ✅ Use correct Docker Compose syntax
-- ✅ Production-ready patterns
+Todos los ejemplos:
+- ✅ Funcionan (agent-with-memory verificado por ti)
+- ✅ Están bien documentados
+- ✅ Disponen de scripts de prueba
+- ✅ Usan la sintaxis correcta de Docker Compose
+- ✅ Siguen patrones listos para producción
 
 ---
 
-**Ready to proceed with Chapter 7!** 🎉
+**¡Listos para continuar con el Capítulo 7!** 🎉
